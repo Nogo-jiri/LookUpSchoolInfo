@@ -1,4 +1,3 @@
-#필요한 모듈 불러오기
 import json
 import requests
 
@@ -8,14 +7,12 @@ def PrintData(x):
         if key in SchoolData[x-1]:
             print(APIData[key],":",SchoolData[x-1][key])
 
-#학교 이름 입력받기
+#학교명 입력받고 API 조회해서 json 파일 저장
 SchoolName=input("정보를 조회하고자 하는 학교의 이름을 입력하세요: ")
-
-#입력받은 학교 이름으로 API 조회해서 json파일 얻기
 url="https://open.neis.go.kr/hub/schoolInfo?SCHUL_NM={m}&Type=json".format(m=SchoolName)
 JsonData=requests.get(url).json()
 
-#API에서 불러올 수 있는 정보에 대한 출력명과 출력 설명 대치
+#API 출력명과 출력 설명 대치
 APIData={
     "SCHUL_NM": "학교명",
     "FOND_SC_NM": "설립명",
@@ -44,7 +41,7 @@ APIData={
     "LOAD_DTM": "적재일시"
 }
 
-#만약 json파일에 학교 정보가 제대로 있다면
+#json 파일에 학교 정보가 제대로 있는 경우
 if "schoolInfo" in JsonData:
     #동명의 학교 개수를 SchoolCount에 저장
     SchoolCount=JsonData["schoolInfo"][0]["head"][0]["list_total_count"]
@@ -56,19 +53,19 @@ if "schoolInfo" in JsonData:
     for n in range(0,SchoolCount):
         SchoolData.append(JsonData["schoolInfo"][1]["row"][n])
 
-    #만약 SchoolCount수가 2 이상이라면
+    #동명의 학교 있음
     if SchoolCount>=2:
         #동명의 학교 출력 후 조회하고자 하는 학교의 번호를 DataNumber에 저장
         for n in range(0,SchoolCount):
             print(str(n+1)+". "+SchoolData[n]["ATPT_OFCDC_SC_NM"]+"의 "+SchoolData[n]["SCHUL_NM"])
         DataNumber=int(input("어느 학교의 정보를 조회하시겠습니까? 번호를 입력해주세요: "))
-    #만약 SchoolCount수가 1이라서 동명의 학교가 없다면
+    #동명의 학교가 없음
     else:
         DataNumber=1
 
     #조회된 정보 출력
     PrintData(DataNumber)
 
-#만약 json파일에 학교 정보가 있지 않다면
+#json 파일에 학교 정보가 제대로 있지 않은 경우
 else:
     print("학교 이름을 잘못 입력하셨거나 네트워크에 연결되어있지 않습니다. 다시 확인해주시기 바랍니다.")
